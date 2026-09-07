@@ -23,13 +23,8 @@ function safeUser(user) {
     };
 }
 
-
-// ================= REGISTER =================
-
 router.post("/register", async (req, res) => {
-
     try {
-
         const { username, email, password } = req.body;
 
         if (!username || !email || !password) {
@@ -77,24 +72,17 @@ router.post("/register", async (req, res) => {
         });
 
     } catch (error) {
-
         console.log(error);
 
         res.status(500).json({
             message: "Registration failed"
         });
-
     }
-
 });
 
 
-// ================= LOGIN =================
-
 router.post("/login", async (req, res) => {
-
     try {
-
         const { email, password } = req.body;
 
         if (!email || !password) {
@@ -126,12 +114,9 @@ router.post("/login", async (req, res) => {
             });
         }
 
-
         // User has successfully logged in
         user.hasLoggedIn = true;
-
         await user.save();
-
 
         const token = createToken(user._id);
 
@@ -142,27 +127,20 @@ router.post("/login", async (req, res) => {
         });
 
     } catch (error) {
-
         console.log(error);
 
         res.status(500).json({
             message: "Login failed"
         });
-
     }
-
 });
 
-
-// ================= CURRENT USER =================
 
 router.get(
     "/me",
     authMiddleware,
     async (req, res) => {
-
         try {
-
             const user = await User.findById(
                 req.userId
             );
@@ -173,55 +151,47 @@ router.get(
                 });
             }
 
-            res.json(
-                safeUser(user)
-            );
+            res.json(safeUser(user));
 
         } catch (error) {
-
             res.status(500).json({
                 message: "Failed to load user"
             });
-
         }
-
     }
 );
 
-
-// ================= USERS =================
 
 router.get(
     "/users",
     authMiddleware,
     async (req, res) => {
-
         try {
-
             const users = await User.find({
+                _id: { $ne: req.userId }
+            }).select("username email bio hasLoggedIn");
 
-                // Don't show yourself
-                _id: {
-                    $ne: req.userId
-                },
+            const safeUsers = users.map(user => ({
+                _id: user._id,
+                username: user.username,
 
-                // Only show users who have logged in
-                hasLoggedIn: true
+                // Hide email if user has never logged in
+                email: user.hasLoggedIn
+                    ? user.email
+                    : "",
 
-            }).select(
-                "username email bio"
-            );
+                bio: user.bio
+            }));
 
-            res.json(users);
+            res.json(safeUsers);
 
         } catch (error) {
+            console.log(error);
 
             res.status(500).json({
                 message: "Failed to load users"
             });
-
         }
-
     }
 );
 

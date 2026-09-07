@@ -654,8 +654,8 @@ body.dark .send-button {
 
 <script>
 
-const API_URL = "http://localhost:5000/api";
-const SOCKET_URL = "http://localhost:5000";
+const API_URL = "https://realtime-chat-backend-1-relt.onrender.com/api";
+const SOCKET_URL = "https://realtime-chat-backend-1-relt.onrender.com";
 
 let isRegisterMode = false;
 let currentUser = null;
@@ -940,7 +940,6 @@ async function loadUsers() {
             name.textContent =
                 user.username;
 
-            // EMAIL HIDDEN FROM USER LIST
             info.appendChild(name);
 
             userElement.appendChild(avatar);
@@ -1323,14 +1322,10 @@ window.addEventListener(
     () => {
 
         const token =
-            localStorage.getItem(
-                "token"
-            );
+            localStorage.getItem("token");
 
         const savedUser =
-            localStorage.getItem(
-                "user"
-            );
+            localStorage.getItem("user");
 
         if (token && savedUser) {
 

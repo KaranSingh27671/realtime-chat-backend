@@ -1,10 +1,13 @@
 const jwt = require("jsonwebtoken");
 
 function setupSocket(io) {
+
     const onlineUsers = new Map();
 
     io.use((socket, next) => {
+
         try {
+
             const token = socket.handshake.auth.token;
 
             if (!token) {
@@ -21,13 +24,21 @@ function setupSocket(io) {
             next();
 
         } catch (error) {
+
             next(new Error("Invalid token"));
+
         }
+
     });
 
     io.on("connection", (socket) => {
 
-        onlineUsers.set(socket.userId, socket.id);
+        socket.join(socket.userId);
+
+        onlineUsers.set(
+            socket.userId,
+            socket.id
+        );
 
         io.emit(
             "onlineUsers",
@@ -37,6 +48,7 @@ function setupSocket(io) {
         socket.on("sendMessage", (message) => {
 
             try {
+
                 const receiverId =
                     typeof message.receiver === "object"
                         ? message.receiver._id
@@ -46,22 +58,20 @@ function setupSocket(io) {
                     return;
                 }
 
-                const receiverSocketId =
-                    onlineUsers.get(String(receiverId));
-
-                if (receiverSocketId) {
-                    io.to(receiverSocketId).emit(
-                        "receiveMessage",
-                        message
-                    );
-                }
+                io.to(String(receiverId)).emit(
+                    "receiveMessage",
+                    message
+                );
 
             } catch (error) {
+
                 console.log(
                     "Socket message error:",
                     error.message
                 );
+
             }
+
         });
 
         socket.on("disconnect", () => {
@@ -72,9 +82,11 @@ function setupSocket(io) {
                 "onlineUsers",
                 Array.from(onlineUsers.keys())
             );
+
         });
 
     });
+
 }
 
 module.exports = setupSocket;

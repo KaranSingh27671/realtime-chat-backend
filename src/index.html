@@ -452,14 +452,22 @@ body.dark .send-button {
     <div class="auth-box">
 
         <div class="auth-logo">
+
             <svg viewBox="0 0 24 24">
+
                 <path d="M20 2H4a2 2 0 0 0-2 2v16l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-4 9H8V9h8v2z"/>
+
             </svg>
+
         </div>
 
-        <h1 id="authTitle">Welcome back</h1>
+        <h1 id="authTitle">
+            Welcome back
+        </h1>
 
-        <p id="authText">Login to continue chatting</p>
+        <p id="authText">
+            Login to continue chatting
+        </p>
 
         <input
             id="username"
@@ -485,9 +493,11 @@ body.dark .send-button {
         </button>
 
         <div class="auth-switch">
+
             <span id="switchText">
                 Create an account
             </span>
+
         </div>
 
         <div id="authError" class="error"></div>
@@ -521,7 +531,6 @@ body.dark .send-button {
                     >
                         User
                     </div>
-
 
                 </div>
 
@@ -634,162 +643,251 @@ body.dark .send-button {
 
 <script>
 
-const API_URL = "https://realtime-chat-backend-1-relt.onrender.com/api";
-const SOCKET_URL = "https://realtime-chat-backend-1-relt.onrender.com";
+const API_URL =
+    "https://realtime-chat-backend-1-relt.onrender.com/api";
+
+const SOCKET_URL =
+    "https://realtime-chat-backend-1-relt.onrender.com";
+
 
 let isRegisterMode = false;
 let currentUser = null;
 let selectedUser = null;
 let socket = null;
 
-const authPage = document.getElementById("authPage");
-const chatPage = document.getElementById("chatPage");
 
-const authTitle = document.getElementById("authTitle");
-const authText = document.getElementById("authText");
+const authPage =
+    document.getElementById("authPage");
 
-const usernameInput = document.getElementById("username");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
+const chatPage =
+    document.getElementById("chatPage");
 
-const authButton = document.getElementById("authButton");
-const switchText = document.getElementById("switchText");
-const authError = document.getElementById("authError");
+const authTitle =
+    document.getElementById("authTitle");
 
-const usersList = document.getElementById("usersList");
-const messages = document.getElementById("messages");
-const messageInput = document.getElementById("messageInput");
+const authText =
+    document.getElementById("authText");
 
+const usernameInput =
+    document.getElementById("username");
 
-switchText.addEventListener("click", () => {
+const emailInput =
+    document.getElementById("email");
 
-    isRegisterMode = !isRegisterMode;
+const passwordInput =
+    document.getElementById("password");
 
-    authError.textContent = "";
+const authButton =
+    document.getElementById("authButton");
 
-    if (isRegisterMode) {
+const switchText =
+    document.getElementById("switchText");
 
-        authTitle.textContent = "Create account";
+const authError =
+    document.getElementById("authError");
 
-        authText.textContent =
-            "Join and start chatting";
+const usersList =
+    document.getElementById("usersList");
 
-        usernameInput.classList.remove("hidden");
+const messages =
+    document.getElementById("messages");
 
-        authButton.textContent =
-            "Create Account";
-
-        switchText.textContent =
-            "Already have an account? Login";
-
-    } else {
-
-        authTitle.textContent =
-            "Welcome back";
-
-        authText.textContent =
-            "Login to continue chatting";
-
-        usernameInput.classList.add("hidden");
-
-        authButton.textContent =
-            "Login";
-
-        switchText.textContent =
-            "Create an account";
-
-    }
-
-});
+const messageInput =
+    document.getElementById("messageInput");
 
 
-authButton.addEventListener("click", async () => {
 
-    authError.textContent = "";
 
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
+switchText.addEventListener(
+    "click",
+    () => {
 
-    try {
+        isRegisterMode =
+            !isRegisterMode;
 
-        let url;
-        let body;
+        authError.textContent = "";
 
         if (isRegisterMode) {
 
-            url = API_URL + "/auth/register";
+            authTitle.textContent =
+                "Create account";
 
-            body = {
-                username: usernameInput.value.trim(),
-                email,
-                password
-            };
+            authText.textContent =
+                "Join and start chatting";
+
+            usernameInput.classList.remove(
+                "hidden"
+            );
+
+            authButton.textContent =
+                "Create Account";
+
+            switchText.textContent =
+                "Already have an account? Login";
 
         } else {
 
-            url = API_URL + "/auth/login";
+            authTitle.textContent =
+                "Welcome back";
 
-            body = {
-                email,
-                password
-            };
+            authText.textContent =
+                "Login to continue chatting";
 
-        }
+            usernameInput.classList.add(
+                "hidden"
+            );
 
-        const response = await fetch(url, {
+            authButton.textContent =
+                "Login";
 
-            method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
-            body: JSON.stringify(body)
-
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-
-            throw new Error(data.message);
+            switchText.textContent =
+                "Create an account";
 
         }
-
-        localStorage.setItem(
-            "token",
-            data.token
-        );
-
-        localStorage.setItem(
-            "user",
-            JSON.stringify(data.user)
-        );
-
-        currentUser = data.user;
-
-        showChat();
-
-    } catch (error) {
-
-        authError.textContent =
-            error.message;
 
     }
+);
 
-});
+
+
+
+authButton.addEventListener(
+    "click",
+    async () => {
+
+        authError.textContent = "";
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
+        try {
+
+            let url;
+            let body;
+
+            if (isRegisterMode) {
+
+                url =
+                    API_URL +
+                    "/auth/register";
+
+                body = {
+
+                    username:
+                        usernameInput.value.trim(),
+
+                    email:
+                        email,
+
+                    password:
+                        password
+
+                };
+
+            } else {
+
+                url =
+                    API_URL +
+                    "/auth/login";
+
+                body = {
+
+                    email:
+                        email,
+
+                    password:
+                        password
+
+                };
+
+            }
+
+
+            const response =
+                await fetch(
+                    url,
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify(body)
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message
+                );
+
+            }
+
+
+            localStorage.setItem(
+                "token",
+                data.token
+            );
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
+            );
+
+
+            currentUser =
+                data.user;
+
+
+            showChat();
+
+
+        } catch (error) {
+
+            authError.textContent =
+                error.message;
+
+        }
+
+    }
+);
+
+
 
 
 async function showChat() {
 
-    authPage.classList.add("hidden");
+    authPage.classList.add(
+        "hidden"
+    );
 
-    chatPage.classList.remove("hidden");
+    chatPage.classList.remove(
+        "hidden"
+    );
+
 
     document.getElementById(
         "myUsername"
     ).textContent =
         currentUser.username;
+
 
     document.getElementById(
         "myAvatar"
@@ -798,6 +896,7 @@ async function showChat() {
             .charAt(0)
             .toUpperCase();
 
+
     connectSocket();
 
     loadUsers();
@@ -805,98 +904,179 @@ async function showChat() {
 }
 
 
+
+
 function connectSocket() {
 
     if (socket) {
+
         socket.disconnect();
+
     }
 
+
     const token =
-        localStorage.getItem("token");
-
-    socket = io(SOCKET_URL, {
-        auth: {
-            token: token
-        }
-    });
-
-    socket.on("connect", () => {
-        console.log(
-            "Socket connected:",
-            socket.id
-        );
-    });
-
-    socket.on("connect_error", error => {
-        console.error(
-            "Socket connection error:",
-            error.message
-        );
-    });
-
-    socket.on("messageSent", message => {
-
-        if (!selectedUser) {
-            return;
-        }
-
-        const senderId =
-            typeof message.sender === "object"
-                ? message.sender._id
-                : message.sender;
-
-        const receiverId =
-            typeof message.receiver === "object"
-                ? message.receiver._id
-                : message.receiver;
-
-        if (
-            String(senderId) === String(currentUser._id) &&
-            String(receiverId) === String(selectedUser._id)
-        ) {
-            addMessage(message);
-
-            messages.scrollTop =
-                messages.scrollHeight;
-        }
-
-        loadUsers();
-    });
-
-    socket.on("receiveMessage", message => {
-
-        const senderId =
-            typeof message.sender === "object"
-                ? message.sender._id
-                : message.sender;
-
-        if (
-            selectedUser &&
-            String(senderId) ===
-                String(selectedUser._id)
-        ) {
-            addMessage(message);
-
-            messages.scrollTop =
-                messages.scrollHeight;
-        }
-
-        loadUsers();
-    });
-
-    socket.on("chatError", error => {
-        console.error(
-            "Chat error:",
-            error
+        localStorage.getItem(
+            "token"
         );
 
-        alert(
-            typeof error === "string"
-                ? error
-                : "Message could not be sent"
+
+    socket =
+        io(
+            SOCKET_URL,
+            {
+
+                auth: {
+
+                    token:
+                        token
+
+                }
+
+            }
         );
-    });
+
+
+    socket.on(
+        "connect",
+        () => {
+
+            console.log(
+                "Socket connected:",
+                socket.id
+            );
+
+        }
+    );
+
+
+    socket.on(
+        "connect_error",
+        error => {
+
+            console.error(
+                "Socket connection error:",
+                error.message
+            );
+
+        }
+    );
+
+
+    
+    socket.on(
+        "messageSent",
+        message => {
+
+            if (!selectedUser) {
+
+                return;
+
+            }
+
+
+            const senderId =
+                typeof message.sender === "object"
+                    ? message.sender._id
+                    : message.sender;
+
+
+            const receiverId =
+                typeof message.receiver === "object"
+                    ? message.receiver._id
+                    : message.receiver;
+
+
+            if (
+
+                String(senderId) ===
+                    String(currentUser._id)
+
+                &&
+
+                String(receiverId) ===
+                    String(selectedUser._id)
+
+            ) {
+
+                addMessage(message);
+
+
+                messages.scrollTop =
+                    messages.scrollHeight;
+
+            }
+
+
+            loadUsers();
+
+        }
+    );
+
+
+    
+    socket.on(
+        "receiveMessage",
+        message => {
+
+            const senderId =
+                typeof message.sender === "object"
+                    ? message.sender._id
+                    : message.sender;
+
+
+            if (
+
+                selectedUser
+
+                &&
+
+                String(senderId) ===
+                    String(selectedUser._id)
+
+            ) {
+
+                addMessage(message);
+
+
+                messages.scrollTop =
+                    messages.scrollHeight;
+
+            }
+
+
+            loadUsers();
+
+        }
+    );
+
+
+    socket.on(
+        "chatError",
+        error => {
+
+            console.error(
+                "Chat error:",
+                error
+            );
+
+
+            alert(
+
+                typeof error === "string"
+
+                    ? error
+
+                    : "Message could not be sent"
+
+            );
+
+        }
+    );
+
 }
+
+
 
 
 async function loadUsers() {
@@ -904,90 +1084,148 @@ async function loadUsers() {
     try {
 
         const token =
-            localStorage.getItem("token");
+            localStorage.getItem(
+                "token"
+            );
+
 
         const response =
             await fetch(
-                API_URL + "/auth/users",
+                API_URL +
+                "/auth/users",
                 {
+
                     headers: {
+
                         Authorization:
                             "Bearer " + token
+
                     }
+
                 }
             );
+
 
         const users =
             await response.json();
 
-        usersList.innerHTML = "";
 
-        users.forEach(user => {
+        usersList.innerHTML =
+            "";
 
-            const userElement =
-                document.createElement("div");
 
-            userElement.className =
-                "user";
+        users.forEach(
+            user => {
 
-            userElement.dataset.userId =
-                user._id;
+                const userElement =
+                    document.createElement(
+                        "div"
+                    );
 
-            const avatar =
-                document.createElement("div");
 
-            avatar.className =
-                "user-avatar";
+                userElement.className =
+                    "user";
 
-            avatar.textContent =
-                user.username
-                    .charAt(0)
-                    .toUpperCase();
 
-            const info =
-                document.createElement("div");
+                userElement.dataset.userId =
+                    user._id;
 
-            info.className =
-                "user-info";
 
-            const name =
-                document.createElement("div");
+                const avatar =
+                    document.createElement(
+                        "div"
+                    );
 
-            name.className =
-                "user-name";
 
-            name.textContent =
-                user.username;
+                avatar.className =
+                    "user-avatar";
 
-            // EMAIL HIDDEN FROM USER LIST
-            info.appendChild(name);
 
-            userElement.appendChild(avatar);
+                avatar.textContent =
+                    user.username
+                        .charAt(0)
+                        .toUpperCase();
 
-            userElement.appendChild(info);
 
-            userElement.addEventListener(
-                "click",
-                () => {
+                const info =
+                    document.createElement(
+                        "div"
+                    );
 
-                    selectUser(user);
+
+                info.className =
+                    "user-info";
+
+
+                const name =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                name.className =
+                    "user-name";
+
+
+                name.textContent =
+                    user.username;
+
+
+                
+                info.appendChild(
+                    name
+                );
+
+
+                userElement.appendChild(
+                    avatar
+                );
+
+
+                userElement.appendChild(
+                    info
+                );
+
+
+                userElement.addEventListener(
+                    "click",
+                    () => {
+
+                        selectUser(user);
+
+                    }
+                );
+
+
+                usersList.appendChild(
+                    userElement
+                );
+
+
+                if (
+
+                    selectedUser
+
+                    &&
+
+                    String(
+                        selectedUser._id
+                    ) ===
+                    String(
+                        user._id
+                    )
+
+                ) {
+
+                    userElement.classList.add(
+                        "active"
+                    );
 
                 }
-            );
 
-            usersList.appendChild(
-                userElement
-            );
-
-            if (
-                selectedUser &&
-                String(selectedUser._id) ===
-                    String(user._id)
-            ) {
-                userElement.classList.add("active");
             }
+        );
 
-        });
 
     } catch (error) {
 
@@ -998,24 +1236,34 @@ async function loadUsers() {
 }
 
 
+
+
 function selectUser(user) {
 
-    selectedUser = user;
+    selectedUser =
+        user;
+
 
     document
-        .querySelectorAll(".user")
-        .forEach(element => {
+        .querySelectorAll(
+            ".user"
+        )
+        .forEach(
+            element => {
 
-            element.classList.remove(
-                "active"
-            );
+                element.classList.remove(
+                    "active"
+                );
 
-        });
+            }
+        );
+
 
     const activeUser =
         document.querySelector(
             `[data-user-id="${user._id}"]`
         );
+
 
     if (activeUser) {
 
@@ -1025,15 +1273,18 @@ function selectUser(user) {
 
     }
 
+
     document.getElementById(
         "chatName"
     ).textContent =
         user.username;
 
+
     document.getElementById(
         "chatStatus"
     ).textContent =
         "Online";
+
 
     document.getElementById(
         "chatAvatar"
@@ -1042,19 +1293,29 @@ function selectUser(user) {
             .charAt(0)
             .toUpperCase();
 
+
     loadMessages();
 
 }
 
 
+
 async function loadMessages() {
 
-    if (!selectedUser) return;
+    if (!selectedUser) {
+
+        return;
+
+    }
+
 
     try {
 
         const token =
-            localStorage.getItem("token");
+            localStorage.getItem(
+                "token"
+            );
+
 
         const response =
             await fetch(
@@ -1064,29 +1325,39 @@ async function loadMessages() {
                 selectedUser._id,
 
                 {
+
                     headers: {
 
                         Authorization:
                             "Bearer " + token
 
                     }
+
                 }
 
             );
 
+
         const data =
             await response.json();
 
-        messages.innerHTML = "";
 
-        data.forEach(message => {
+        messages.innerHTML =
+            "";
 
-            addMessage(message);
 
-        });
+        data.forEach(
+            message => {
+
+                addMessage(message);
+
+            }
+        );
+
 
         messages.scrollTop =
             messages.scrollHeight;
+
 
     } catch (error) {
 
@@ -1099,17 +1370,56 @@ async function loadMessages() {
 
 function addMessage(message) {
 
+   
+
+    const messageId =
+        message._id ||
+        message.id ||
+        "";
+
+
+    if (
+
+        messageId
+
+        &&
+
+        messages.querySelector(
+            `[data-message-id="${messageId}"]`
+        )
+
+    ) {
+
+        return;
+
+    }
+
+
     const senderId =
         typeof message.sender === "object"
             ? message.sender._id
             : message.sender;
 
+
     const messageElement =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
+
+
+    if (messageId) {
+
+        messageElement.dataset.messageId =
+            messageId;
+
+    }
+
 
     const isMine =
         String(senderId) ===
         String(currentUser._id);
+
 
     messageElement.className =
         "message " +
@@ -1119,39 +1429,61 @@ function addMessage(message) {
                 : "received"
         );
 
+
     const content =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     content.textContent =
         message.content;
 
+
     const timeElement =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     timeElement.className =
         "message-time";
 
+
     const time =
         message.createdAt
+
             ? new Date(
                 message.createdAt
             ).toLocaleTimeString(
                 [],
                 {
-                    hour: "2-digit",
-                    minute: "2-digit"
+
+                    hour:
+                        "2-digit",
+
+                    minute:
+                        "2-digit"
+
                 }
             )
+
             : "";
+
 
     timeElement.textContent =
         time;
 
-    messageElement.appendChild(content);
+
+    messageElement.appendChild(
+        content
+    );
+
 
     messageElement.appendChild(
         timeElement
     );
+
 
     messages.appendChild(
         messageElement
@@ -1164,42 +1496,126 @@ document.getElementById(
     "messageForm"
 ).addEventListener(
     "submit",
-    event => {
+    async event => {
 
         event.preventDefault();
 
+
         if (!selectedUser) {
+
             return;
+
         }
 
-        if (!socket || !socket.connected) {
-            alert(
-                "Not connected to chat server. Please wait a moment and try again."
-            );
-            return;
-        }
 
         const content =
             messageInput.value.trim();
 
+
         if (!content) {
+
             return;
+
         }
 
-        socket.emit(
-            "sendMessage",
-            {
-                receiver: String(
-                    selectedUser._id
-                ),
-                content: content
-            }
-        );
 
-        messageInput.value = "";
+        try {
+
+            const token =
+                localStorage.getItem(
+                    "token"
+                );
+
+            const response =
+                await fetch(
+
+                    API_URL +
+                    "/messages",
+
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Authorization":
+                                "Bearer " +
+                                token
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                receiver:
+                                    String(
+                                        selectedUser._id
+                                    ),
+
+                                content:
+                                    content
+
+                            })
+
+                    }
+
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+
+                    data.message ||
+
+                    "Message could not be sent"
+
+                );
+
+            }
+
+            addMessage(
+                data
+            );
+
+
+            messages.scrollTop =
+                messages.scrollHeight;
+
+
+            messageInput.value =
+                "";
+
+            loadUsers();
+
+        } catch (error) {
+
+            console.error(
+                "Message sending failed:",
+                error
+            );
+
+
+            alert(
+
+                error.message ||
+
+                "Message could not be sent"
+
+            );
+
+        }
+
     }
 );
-
 
 document.getElementById(
     "logoutButton"
@@ -1211,9 +1627,11 @@ document.getElementById(
             "token"
         );
 
+
         localStorage.removeItem(
             "user"
         );
+
 
         if (socket) {
 
@@ -1221,11 +1639,11 @@ document.getElementById(
 
         }
 
+
         location.reload();
 
     }
 );
-
 
 document.getElementById(
     "themeButton"
@@ -1237,15 +1655,19 @@ document.getElementById(
             "dark"
         );
 
+
         const button =
             document.getElementById(
                 "themeButton"
             );
 
+
         if (
+
             document.body.classList.contains(
                 "dark"
             )
+
         ) {
 
             button.textContent =
@@ -1272,22 +1694,32 @@ document.getElementById(
             event.target.value
                 .toLowerCase();
 
+
         document
-            .querySelectorAll(".user")
-            .forEach(user => {
+            .querySelectorAll(
+                ".user"
+            )
+            .forEach(
+                user => {
 
-                user.style.display =
-                    user.innerText
-                        .toLowerCase()
-                        .includes(search)
+                    user.style.display =
 
-                        ? "flex"
-                        : "none";
+                        user.innerText
+                            .toLowerCase()
+                            .includes(
+                                search
+                            )
 
-            });
+                            ? "flex"
+
+                            : "none";
+
+                }
+            );
 
     }
 );
+
 
 
 window.addEventListener(
@@ -1299,15 +1731,23 @@ window.addEventListener(
                 "token"
             );
 
+
         const savedUser =
             localStorage.getItem(
                 "user"
             );
 
-        if (token && savedUser) {
+
+        if (
+            token &&
+            savedUser
+        ) {
 
             currentUser =
-                JSON.parse(savedUser);
+                JSON.parse(
+                    savedUser
+                );
+
 
             showChat();
 

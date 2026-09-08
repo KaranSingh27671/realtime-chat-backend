@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const Message = require("../models/Message");
 
 function setupSocket(io) {
     const onlineUsers = new Map();
@@ -35,29 +34,24 @@ function setupSocket(io) {
             Array.from(onlineUsers.keys())
         );
 
-        socket.on("sendMessage", async (data) => {
+        socket.on("sendMessage", (message) => {
 
             try {
-                const { receiver, content } = data;
+                const receiverId =
+                    typeof message.receiver === "object"
+                        ? message.receiver._id
+                        : message.receiver;
 
-                if (!receiver || !content || !content.trim()) {
+                if (!receiverId) {
                     return;
                 }
 
-                const message = await Message.create({
-                    sender: socket.userId,
-                    receiver: receiver,
-                    content: content.trim()
-                });
-
                 const receiverSocketId =
-                    onlineUsers.get(receiver);
-
-                socket.emit("newMessage", message);
+                    onlineUsers.get(String(receiverId));
 
                 if (receiverSocketId) {
                     io.to(receiverSocketId).emit(
-                        "newMessage",
+                        "receiveMessage",
                         message
                     );
                 }
